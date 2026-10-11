@@ -13,7 +13,6 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
     .font-serif-title { font-family: 'Playfair Display', serif; }
     
-    /* Custom scrollbar for horizontal timeline */
     .timeline-scroll::-webkit-scrollbar {
       height: 7px;
     }
@@ -29,7 +28,6 @@
       background: #a8a29e;
     }
 
-    /* Print & PDF Export Overrides */
     @media print {
       @page {
         margin: 1.5cm;
@@ -53,7 +51,7 @@
 </head>
 <body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col antialiased selection:bg-amber-100 selection:text-amber-900">
 
-  <!-- Printable Container (Strictly Tab-Specific, Visualizer Hidden) -->
+  <!-- Printable Container (Tab-Specific, No Visualizer) -->
   <div id="printContainer" class="hidden font-sans">
     <div class="border-b-2 border-stone-800 pb-4 mb-6 text-center">
       <span class="text-xs uppercase font-bold tracking-widest text-amber-900">Wedding Itinerary</span>
@@ -61,7 +59,6 @@
       <p id="printTabSubtitle" class="text-xs text-stone-600 mt-0.5 font-medium">Monday, February 16, 2026</p>
     </div>
 
-    <!-- Printable Event Table for Active Tab -->
     <div id="printTableWrapper">
       <table class="w-full text-left border-collapse text-xs">
         <thead>
@@ -71,13 +68,10 @@
             <th class="py-2.5 px-2 font-bold">Event & Description</th>
           </tr>
         </thead>
-        <tbody id="printTableBody" class="divide-y divide-stone-200">
-          <!-- Populated by JS -->
-        </tbody>
+        <tbody id="printTableBody" class="divide-y divide-stone-200"></tbody>
       </table>
     </div>
 
-    <!-- Printable Placeholder if tab has no events yet -->
     <div id="printPlaceholderWrapper" class="hidden text-center py-12 border border-dashed border-stone-300 rounded-lg">
       <p class="text-sm font-semibold text-stone-700">Details to be updated soon</p>
       <p class="text-xs text-stone-500 mt-1">The finalized itinerary for this date will be updated shortly.</p>
@@ -102,7 +96,7 @@
           <input type="checkbox" id="cascadeToggle" checked class="w-4 h-4 accent-amber-600 rounded cursor-pointer" onchange="toggleCascade()">
           <span>Cascade Shifts</span>
         </label>
-        
+
         <!-- Export Tab as PDF -->
         <button onclick="exportActiveTabPDF()" class="text-xs font-semibold text-stone-700 bg-white border border-stone-300 hover:bg-stone-50 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-2xs">
           <i data-lucide="file-down" class="w-3.5 h-3.5 text-amber-700"></i> Export PDF
@@ -134,7 +128,7 @@
 
   <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-    <!-- Information & Disclaimer Banner -->
+    <!-- Disclaimer Banner -->
     <div id="bannerCard" class="bg-amber-50/80 border border-amber-200/90 rounded-xl p-4 text-xs sm:text-sm text-stone-700 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs no-print">
       <div class="flex items-start gap-2.5">
         <i data-lucide="info" class="w-5 h-5 text-amber-700 shrink-0 mt-0.5"></i>
@@ -148,7 +142,6 @@
         </div>
       </div>
       
-      <!-- WhatsApp Share Options -->
       <div class="flex items-center gap-2 self-start md:self-center shrink-0 flex-wrap">
         <button onclick="copySingleDayWhatsApp()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-700 hover:bg-stone-50 transition shadow-2xs" title="Copy schedule of current active tab">
           <i data-lucide="copy" class="w-3.5 h-3.5 text-stone-500"></i> Copy This Day
@@ -162,7 +155,7 @@
     <!-- Active Tab: Timeline Container -->
     <div id="timelineContainer" class="space-y-6">
       
-      <!-- Visual Timeline Section (Hidden from Print & PDF) -->
+      <!-- Visual Timeline Section (Hidden in Print) -->
       <section class="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 shadow-xs no-print">
         <div class="flex items-center justify-between mb-3 pb-2 border-b border-stone-100">
           <div class="flex items-center gap-2">
@@ -172,48 +165,31 @@
           <span class="text-[11px] text-stone-500 font-medium">9:30 AM – Midnight</span>
         </div>
 
-        <!-- Scrollable Gantt Canvas -->
         <div class="timeline-scroll overflow-x-auto w-full pt-1 pb-3">
           <div class="min-w-[760px] select-none">
-            
-            <!-- Time Axis Header -->
             <div class="flex items-center text-[11px] font-mono font-semibold text-stone-500 border-b border-stone-200 pb-2 mb-2">
               <div class="w-44 shrink-0 text-stone-400 uppercase text-[10px] tracking-wider pl-1">Event</div>
               <div class="flex-1 relative h-5">
                 <div class="absolute inset-0 flex justify-between">
-                  <span>10 AM</span>
-                  <span>11 AM</span>
-                  <span>12 PM</span>
-                  <span>1 PM</span>
-                  <span>2 PM</span>
-                  <span>3 PM</span>
-                  <span>4 PM</span>
-                  <span>5 PM</span>
-                  <span>6 PM</span>
-                  <span>7 PM</span>
-                  <span>8 PM</span>
-                  <span>9 PM</span>
-                  <span>10 PM</span>
-                  <span>11 PM</span>
-                  <span>12 AM</span>
+                  <span>10 AM</span><span>11 AM</span><span>12 PM</span><span>1 PM</span><span>2 PM</span><span>3 PM</span><span>4 PM</span><span>5 PM</span><span>6 PM</span><span>7 PM</span><span>8 PM</span><span>9 PM</span><span>10 PM</span><span>11 PM</span><span>12 AM</span>
                 </div>
               </div>
             </div>
-
-            <!-- Gantt Rows Container -->
             <div id="ganttBars" class="space-y-2 relative"></div>
-
           </div>
         </div>
       </section>
 
-      <!-- Slot Editor Cards -->
+      <!-- Slot Editor Cards (Feb 16 only) -->
       <section class="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 shadow-xs">
-        <div class="flex items-center justify-between mb-4 pb-2 border-b border-stone-100">
-          <h2 class="text-sm font-bold uppercase tracking-wider text-stone-800 flex items-center gap-2">
-            <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i> Event Slots & Duration Editor
-          </h2>
-          <span class="text-xs text-stone-500">Tap pencil to edit details or adjust ±15m</span>
+        <div class="flex items-center justify-between mb-4 pb-2 border-b border-stone-100 flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-800">Event Slots & Duration Editor</h2>
+          </div>
+          <button onclick="openCreateModal()" class="text-xs font-semibold text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-md flex items-center gap-1 transition">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add New Slot
+          </button>
         </div>
         <div id="eventList" class="divide-y divide-stone-100"></div>
       </section>
@@ -231,11 +207,11 @@
 
   </main>
 
-  <!-- Edit Modal Window -->
+  <!-- Edit / Add Modal Window -->
   <div id="editModal" class="fixed inset-0 bg-stone-900/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-xs no-print">
-    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 border border-stone-200 animate-in fade-in zoom-in-95 duration-150">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 border border-stone-200">
       <div class="flex items-center justify-between pb-3 border-b border-stone-100">
-        <h3 class="text-base font-bold text-stone-900 flex items-center gap-2">
+        <h3 id="modalHeaderTitle" class="text-base font-bold text-stone-900 flex items-center gap-2">
           <i data-lucide="edit-3" class="w-4 h-4 text-amber-600"></i> Edit Event Details
         </h3>
         <button onclick="closeModal()" class="text-stone-400 hover:text-stone-700 p-1 rounded-lg">
@@ -246,7 +222,7 @@
       <div class="space-y-3.5 text-xs sm:text-sm">
         <div>
           <label class="block font-semibold text-stone-700 mb-1">Event Name</label>
-          <input type="text" id="modalName" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden">
+          <input type="text" id="modalName" placeholder="e.g. Sangeet / Evening Aarti" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -256,13 +232,13 @@
           </div>
           <div>
             <label class="block font-semibold text-stone-700 mb-1">Duration (Mins)</label>
-            <input type="number" id="modalDuration" step="15" min="15" class="w-full border border-stone-300 rounded-lg px-3 py-2 font-mono text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden">
+            <input type="number" id="modalDuration" step="15" min="15" value="60" class="w-full border border-stone-300 rounded-lg px-3 py-2 font-mono text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden">
           </div>
         </div>
 
         <div>
           <label class="block font-semibold text-stone-700 mb-1">Notes / Description</label>
-          <textarea id="modalNote" rows="2" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden resize-none"></textarea>
+          <textarea id="modalNote" rows="2" placeholder="Venue details, wardrobe requirements, or reminders..." class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden resize-none"></textarea>
         </div>
 
         <div>
@@ -283,7 +259,7 @@
 
       <div class="flex items-center justify-end gap-2 pt-3 border-t border-stone-100">
         <button onclick="closeModal()" class="px-4 py-2 rounded-lg border border-stone-300 text-xs font-semibold text-stone-600 hover:bg-stone-50">Cancel</button>
-        <button onclick="saveModalChanges()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs">Save Changes</button>
+        <button onclick="saveModalChanges()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs">Save</button>
       </div>
     </div>
   </div>
@@ -367,12 +343,13 @@
     };
 
     const PALETTE = ['#d97706', '#0284c7', '#059669', '#db2777', '#64748b', '#ea580c', '#b91c1c', '#7c3aed'];
-    const STORAGE_KEY = 'wedding_timeline_feb16_v6';
+    const STORAGE_KEY = 'wedding_timeline_feb16_v8';
 
     let currentTab = 'feb16';
     let cascadeEnabled = true;
     let events = [];
     let editingIndex = null;
+    let isCreatingNew = false;
     let selectedColor = '#d97706';
 
     function loadEvents() {
@@ -465,6 +442,7 @@
           }
         }
       }
+      events.sort((a, b) => a.startMin - b.startMin);
       saveEvents();
       render();
     }
@@ -501,9 +479,40 @@
       render();
     }
 
-    // Modal Operations
+    function deleteEvent(index) {
+      if (confirm(`Delete "${events[index].name}"?`)) {
+        events.splice(index, 1);
+        saveEvents();
+        render();
+      }
+    }
+
+    function openCreateModal() {
+      if (currentTab !== 'feb16') return;
+      isCreatingNew = true;
+      editingIndex = null;
+      document.getElementById('modalHeaderTitle').innerHTML = '<i data-lucide="plus-circle" class="w-4 h-4 text-amber-600"></i> Add New Event Slot';
+      document.getElementById('modalName').value = '';
+      
+      let defaultStartMin = 600;
+      if (events.length > 0) {
+        const last = events[events.length - 1];
+        defaultStartMin = last.startMin + last.durationMin;
+      }
+      document.getElementById('modalStart').value = minToInputVal(defaultStartMin);
+      document.getElementById('modalDuration').value = '60';
+      document.getElementById('modalNote').value = '';
+      document.getElementById('modalLocked').checked = false;
+      selectedColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+      renderColorPicker();
+      document.getElementById('editModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
     function openEditModal(index) {
+      isCreatingNew = false;
       editingIndex = index;
+      document.getElementById('modalHeaderTitle').innerHTML = '<i data-lucide="edit-3" class="w-4 h-4 text-amber-600"></i> Edit Event Details';
       const ev = events[index];
       document.getElementById('modalName').value = ev.name;
       document.getElementById('modalStart').value = minToInputVal(ev.startMin);
@@ -513,11 +522,13 @@
       selectedColor = ev.color;
       renderColorPicker();
       document.getElementById('editModal').classList.remove('hidden');
+      lucide.createIcons();
     }
 
     function closeModal() {
       document.getElementById('editModal').classList.add('hidden');
       editingIndex = null;
+      isCreatingNew = false;
     }
 
     function renderColorPicker() {
@@ -537,24 +548,32 @@
     }
 
     function saveModalChanges() {
-      if (editingIndex === null) return;
-      const ev = events[editingIndex];
-      const newName = document.getElementById('modalName').value.trim();
-      const newStartStr = document.getElementById('modalStart').value;
-      const newDur = parseInt(document.getElementById('modalDuration').value, 10);
-      const newNote = document.getElementById('modalNote').value.trim();
-      const newLocked = document.getElementById('modalLocked').checked;
+      const name = document.getElementById('modalName').value.trim() || 'Untitled Event';
+      const startStr = document.getElementById('modalStart').value || '10:00';
+      const dur = parseInt(document.getElementById('modalDuration').value, 10) || 60;
+      const note = document.getElementById('modalNote').value.trim();
+      const locked = document.getElementById('modalLocked').checked;
 
-      if (newName) ev.name = newName;
-      ev.note = newNote;
-      ev.color = selectedColor;
-      ev.locked = newLocked;
-
-      if (!isNaN(newDur) && newDur >= 15) {
-        handleDurationChange(editingIndex, newDur);
-      }
-      if (newStartStr) {
-        handleStartChange(editingIndex, newStartStr);
+      if (isCreatingNew) {
+        const newEv = {
+          id: 'slot_' + Date.now(),
+          name: name,
+          startMin: inputValToMin(startStr),
+          durationMin: dur,
+          color: selectedColor,
+          note: note,
+          locked: locked
+        };
+        events.push(newEv);
+        events.sort((a, b) => a.startMin - b.startMin);
+      } else if (editingIndex !== null) {
+        const ev = events[editingIndex];
+        ev.name = name;
+        ev.note = note;
+        ev.color = selectedColor;
+        ev.locked = locked;
+        if (dur >= 15) handleDurationChange(editingIndex, dur);
+        if (startStr) handleStartChange(editingIndex, startStr);
       }
 
       saveEvents();
@@ -562,7 +581,6 @@
       render();
     }
 
-    // Tab-Specific PDF Export (No visualizer included)
     function exportActiveTabPDF() {
       const tabMeta = TAB_INFO[currentTab] || { title: 'Wedding Schedule', subtitle: 'February 2026' };
       document.getElementById('printTabTitle').textContent = tabMeta.title;
@@ -638,15 +656,9 @@
       });
       text += "\n";
 
-      text += "🗓️ *TUESDAY, FEB 17*\n";
-      text += "• _Details to be updated soon_\n\n";
-
-      text += "🗓️ *WEDNESDAY, FEB 18*\n";
-      text += "• _Details to be updated soon_\n\n";
-
-      text += "🗓️ *THURSDAY, FEB 19*\n";
-      text += "• _Details to be updated soon_\n\n";
-
+      text += "🗓️ *TUESDAY, FEB 17*\n• _Details to be updated soon_\n\n";
+      text += "🗓️ *WEDNESDAY, FEB 18*\n• _Details to be updated soon_\n\n";
+      text += "🗓️ *THURSDAY, FEB 19*\n• _Details to be updated soon_\n\n";
       text += "ℹ️ _Note: Timings are tentative and subject to minor adjustments._";
 
       navigator.clipboard.writeText(text).then(() => {
@@ -696,6 +708,16 @@
       const container = document.getElementById('eventList');
       container.innerHTML = '';
 
+      if (events.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-stone-400">
+            <p class="text-xs">No events added yet.</p>
+            <button onclick="openCreateModal()" class="mt-2 text-xs font-semibold text-amber-700 underline">Add your first event</button>
+          </div>
+        `;
+        return;
+      }
+
       events.forEach((ev, idx) => {
         const endMin = ev.startMin + ev.durationMin;
         const row = document.createElement('div');
@@ -743,6 +765,11 @@
                     title="${ev.locked ? 'Unlock slot' : 'Lock slot'}" 
                     class="p-1.5 rounded-lg border transition ${ev.locked ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-white border-stone-200 text-stone-400 hover:text-stone-700 hover:bg-stone-50'}">
               <i data-lucide="${ev.locked ? 'lock' : 'unlock'}" class="w-4 h-4"></i>
+            </button>
+
+            <!-- Delete Button -->
+            <button onclick="deleteEvent(${idx})" title="Delete event" class="p-1.5 rounded-lg border border-stone-200 bg-white text-stone-400 hover:text-red-600 hover:bg-red-50 transition shadow-2xs">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
 
           </div>
