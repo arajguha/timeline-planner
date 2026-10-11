@@ -2,169 +2,184 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>Wedding Celebrations — February 2026 Itinerary</title>
-
-  <!-- Tailwind CSS via CDN -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Timeline • Feb 2026</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      background-color: #faf7f2;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .font-serif-title {
-      font-family: 'Cormorant Garamond', Georgia, serif;
-    }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-serif-title { font-family: 'Playfair Display', serif; }
     
-    /* Smooth timeline horizontal scrollbar */
+    /* Custom scrollbar for horizontal timeline */
     .timeline-scroll::-webkit-scrollbar {
       height: 7px;
     }
     .timeline-scroll::-webkit-scrollbar-track {
       background: #f5f5f4;
-      border-radius: 999px;
+      border-radius: 4px;
     }
     .timeline-scroll::-webkit-scrollbar-thumb {
       background: #d6d3d1;
-      border-radius: 999px;
+      border-radius: 4px;
     }
     .timeline-scroll::-webkit-scrollbar-thumb:hover {
       background: #a8a29e;
     }
 
+    /* Print & PDF Export Overrides */
     @media print {
-      .no-print { display: none !important; }
-      body { background: #ffffff !important; color: #000000 !important; }
+      @page {
+        margin: 1.5cm;
+        size: auto;
+      }
+      body {
+        background: white !important;
+        color: #111827 !important;
+      }
+      header, #bannerCard, #editModal, .no-print, button, input, label, footer {
+        display: none !important;
+      }
+      #printContainer {
+        display: block !important;
+      }
+      #timelineContainer, #placeholderContainer {
+        display: none !important;
+      }
     }
   </style>
 </head>
+<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col antialiased selection:bg-amber-100 selection:text-amber-900">
 
-<body class="text-stone-800 min-h-screen flex flex-col antialiased selection:bg-amber-200 selection:text-amber-900">
+  <!-- Printable Container (Strictly Tab-Specific, Visualizer Hidden) -->
+  <div id="printContainer" class="hidden font-sans">
+    <div class="border-b-2 border-stone-800 pb-4 mb-6 text-center">
+      <span class="text-xs uppercase font-bold tracking-widest text-amber-900">Wedding Itinerary</span>
+      <h1 id="printTabTitle" class="font-serif-title text-2xl font-bold text-stone-900 mt-1">Wedding Day Schedule</h1>
+      <p id="printTabSubtitle" class="text-xs text-stone-600 mt-0.5 font-medium">Monday, February 16, 2026</p>
+    </div>
 
-  <!-- Header -->
-  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-amber-200/60 shadow-xs no-print">
-    <div class="max-w-5xl mx-auto px-3.5 sm:px-6 py-3 flex items-center justify-between gap-2.5">
-      
-      <!-- Brand & Date Heading -->
-      <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 flex items-center justify-center text-white shrink-0 shadow-xs">
-          <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-        </div>
-        <div class="min-w-0">
-          <h1 class="font-serif-title text-xl sm:text-2xl font-bold tracking-tight text-stone-900 truncate leading-tight">
-            Wedding Itinerary
-          </h1>
-          <p class="text-[11px] sm:text-xs text-amber-800/80 font-medium truncate">Feb 16 – 19 • Cascading Timeline Planner</p>
-        </div>
+    <!-- Printable Event Table for Active Tab -->
+    <div id="printTableWrapper">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="border-b border-stone-400 text-stone-700 uppercase tracking-wider text-[10px]">
+            <th class="py-2.5 px-2 font-bold w-40">Time Window</th>
+            <th class="py-2.5 px-2 font-bold w-24">Duration</th>
+            <th class="py-2.5 px-2 font-bold">Event & Description</th>
+          </tr>
+        </thead>
+        <tbody id="printTableBody" class="divide-y divide-stone-200">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Printable Placeholder if tab has no events yet -->
+    <div id="printPlaceholderWrapper" class="hidden text-center py-12 border border-dashed border-stone-300 rounded-lg">
+      <p class="text-sm font-semibold text-stone-700">Details to be updated soon</p>
+      <p class="text-xs text-stone-500 mt-1">The finalized itinerary for this date will be updated shortly.</p>
+    </div>
+
+    <div class="mt-8 pt-3 border-t border-stone-200 text-[10px] text-stone-500 flex justify-between">
+      <span>* Note: Timings are tentative and subject to minor adjustments.</span>
+      <span>Exported: February 2026 Itinerary</span>
+    </div>
+  </div>
+
+  <!-- Screen Header -->
+  <header class="bg-white border-b border-stone-200 sticky top-0 z-30 shadow-xs no-print">
+    <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div>
+        <span class="text-[11px] uppercase tracking-wider font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Wedding Itinerary</span>
+        <h1 class="font-serif-title text-2xl sm:text-3xl text-stone-900 mt-0.5 font-bold">Interactive Event Timeline</h1>
       </div>
-
-      <!-- Header Action Controls -->
-      <div class="flex items-center gap-2 shrink-0">
+      <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
         <!-- Cascade Toggle -->
-        <label title="Toggle cascading shifts for downstream events" class="cursor-pointer flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-stone-100 hover:bg-stone-200/80 border border-stone-200 transition text-xs font-semibold select-none">
+        <label class="flex items-center gap-2 cursor-pointer bg-stone-100 hover:bg-stone-200/80 px-3 py-1.5 rounded-lg border border-stone-200 transition text-xs font-semibold text-stone-700 select-none">
           <input type="checkbox" id="cascadeToggle" checked class="w-4 h-4 accent-amber-600 rounded cursor-pointer" onchange="toggleCascade()">
-          <span class="hidden sm:inline text-stone-700">Cascade Shifts</span>
-          <span class="sm:hidden text-stone-700">Cascade</span>
+          <span>Cascade Shifts</span>
         </label>
+        
+        <!-- Export Tab as PDF -->
+        <button onclick="exportActiveTabPDF()" class="text-xs font-semibold text-stone-700 bg-white border border-stone-300 hover:bg-stone-50 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-2xs">
+          <i data-lucide="file-down" class="w-3.5 h-3.5 text-amber-700"></i> Export PDF
+        </button>
 
-        <!-- Quick Reset Button -->
-        <button onclick="resetDefaults()" title="Reset schedule back to original default" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-white hover:bg-amber-50 border border-amber-300 text-amber-800 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95 shadow-2xs">
-          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-amber-600"></i>
-          <span class="hidden sm:inline">Reset to Default</span>
-          <span class="sm:hidden">Reset</span>
+        <!-- Reset Button -->
+        <button onclick="resetDefaults()" class="text-xs font-semibold text-stone-600 hover:text-stone-900 bg-white border border-stone-300 hover:bg-stone-50 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-2xs">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
         </button>
       </div>
-
     </div>
 
     <!-- Date Tabs -->
-    <nav class="max-w-5xl mx-auto px-3.5 sm:px-6 flex gap-1.5 sm:gap-2 overflow-x-auto pb-2" aria-label="Dates">
-      <button onclick="switchTab('feb16')" id="tab-feb16" class="tab-btn px-3.5 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold rounded-xl border border-amber-300 bg-amber-500 text-white flex items-center gap-1.5 shrink-0 transition shadow-2xs">
-        <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-        <span>Feb 16</span>
-        <span class="text-[10px] bg-white/20 px-1.5 py-0.2 rounded font-normal">Wedding Day</span>
+    <div class="max-w-6xl mx-auto px-4 flex gap-1 border-t border-stone-100 pt-2 overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('feb16')" id="tab-feb16" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-amber-600 text-amber-800 bg-amber-50/70 whitespace-nowrap transition">
+        Feb 16 (Wedding Day)
       </button>
-
-      <button onclick="switchTab('feb17')" id="tab-feb17" class="tab-btn px-3.5 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-xl border border-transparent text-stone-600 hover:bg-stone-100 flex items-center gap-1 shrink-0 transition">
-        <span>Feb 17</span>
-        <span class="text-[10px] text-stone-400">Day 2</span>
+      <button onclick="switchTab('feb17')" id="tab-feb17" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-stone-500 hover:text-stone-800 whitespace-nowrap transition">
+        Feb 17
       </button>
-
-      <button onclick="switchTab('feb18')" id="tab-feb18" class="tab-btn px-3.5 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-xl border border-transparent text-stone-600 hover:bg-stone-100 flex items-center gap-1 shrink-0 transition">
-        <span>Feb 18</span>
-        <span class="text-[10px] text-stone-400">Day 3</span>
+      <button onclick="switchTab('feb18')" id="tab-feb18" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-stone-500 hover:text-stone-800 whitespace-nowrap transition">
+        Feb 18
       </button>
-
-      <button onclick="switchTab('feb19')" id="tab-feb19" class="tab-btn px-3.5 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-xl border border-transparent text-stone-600 hover:bg-stone-100 flex items-center gap-1 shrink-0 transition">
-        <span>Feb 19</span>
-        <span class="text-[10px] text-stone-400">Day 4</span>
+      <button onclick="switchTab('feb19')" id="tab-feb19" class="tab-btn px-4 py-2 text-xs sm:text-sm font-semibold rounded-t-lg border-b-2 border-transparent text-stone-500 hover:text-stone-800 whitespace-nowrap transition">
+        Feb 19
       </button>
-    </nav>
+    </div>
   </header>
 
-  <!-- Toast Notification -->
-  <div id="toastMessage" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white text-xs sm:text-sm px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 transition-all">
-    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
-    <span id="toastText">Changes saved</span>
-  </div>
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-  <main class="max-w-5xl mx-auto px-3.5 sm:px-6 py-5 flex-1 w-full space-y-5">
-
-    <!-- Explanatory Banner & Requested Disclaimer -->
-    <section class="bg-gradient-to-r from-amber-50 via-amber-50/70 to-orange-50 border border-amber-200/90 rounded-2xl p-4 sm:p-5 shadow-xs">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-        <div class="flex items-start gap-3">
-          <div class="p-2 rounded-xl bg-amber-100/80 text-amber-800 shrink-0 mt-0.5">
-            <i data-lucide="info" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-          </div>
-          <div class="text-xs sm:text-sm text-stone-700 leading-relaxed">
-            <p class="font-medium text-stone-900">
-              Change any time slot or duration below. In <span class="text-amber-800 font-semibold">Cascade Mode</span>, subsequent events shift forward automatically while preserving individual durations.
-            </p>
-            <p class="mt-1.5 text-amber-900 font-semibold bg-amber-100/90 border border-amber-300/80 px-2.5 py-1 rounded-lg inline-block text-[11px] sm:text-xs">
-              Note: Any changes you make are saved locally to the browser memory only. Use 'Reset to Default' anytime to restore the official timeline.
-            </p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
-          <button onclick="copyWhatsAppFormat()" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs transition active:scale-95">
-            <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Copy WhatsApp Summary
-          </button>
+    <!-- Information & Disclaimer Banner -->
+    <div id="bannerCard" class="bg-amber-50/80 border border-amber-200/90 rounded-xl p-4 text-xs sm:text-sm text-stone-700 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs no-print">
+      <div class="flex items-start gap-2.5">
+        <i data-lucide="info" class="w-5 h-5 text-amber-700 shrink-0 mt-0.5"></i>
+        <div class="space-y-1">
+          <p class="font-medium text-stone-900 leading-snug">
+            Change any time slot or duration below. In Cascade Mode, subsequent events shift forward automatically while preserving individual durations.
+          </p>
+          <p class="text-xs text-amber-900 font-medium bg-amber-100/70 border border-amber-300/80 px-2 py-1 rounded inline-block">
+            Note: Any changes you make are saved locally to the browser memory only. Use 'Reset to Default' anytime to restore the official timeline.
+          </p>
         </div>
       </div>
-    </section>
+      
+      <!-- WhatsApp Share Options -->
+      <div class="flex items-center gap-2 self-start md:self-center shrink-0 flex-wrap">
+        <button onclick="copySingleDayWhatsApp()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-stone-300 rounded-lg text-xs font-semibold text-stone-700 hover:bg-stone-50 transition shadow-2xs" title="Copy schedule of current active tab">
+          <i data-lucide="copy" class="w-3.5 h-3.5 text-stone-500"></i> Copy This Day
+        </button>
+        <button onclick="copyAllDaysWhatsApp()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition shadow-2xs" title="Copy all 4 dates for WhatsApp">
+          <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Copy All Days (WhatsApp)
+        </button>
+      </div>
+    </div>
 
-    <!-- Timeline Container (Active Tab) -->
-    <div id="timelineContainer" class="space-y-5">
-
-      <!-- Visual Gantt Progression Section -->
-      <section class="bg-white rounded-2xl border border-stone-200/90 p-4 sm:p-5 shadow-xs">
-        <div class="flex items-center justify-between pb-3 border-b border-stone-100 mb-3">
+    <!-- Active Tab: Timeline Container -->
+    <div id="timelineContainer" class="space-y-6">
+      
+      <!-- Visual Timeline Section (Hidden from Print & PDF) -->
+      <section class="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 shadow-xs no-print">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-stone-100">
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-            <h2 class="font-serif-title text-xl sm:text-2xl font-bold text-stone-900">Visual Schedule Progression</h2>
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span>
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-800">Visual Schedule Progression</h2>
           </div>
-          <span class="text-[11px] text-stone-400 font-medium hidden sm:inline">10:00 AM – Midnight • Tap any bar to edit</span>
+          <span class="text-[11px] text-stone-500 font-medium">9:30 AM – Midnight</span>
         </div>
 
-        <!-- Scrollable horizontal track with fixed width inside -->
-        <div class="timeline-scroll overflow-x-auto pb-2 pt-1 w-full">
+        <!-- Scrollable Gantt Canvas -->
+        <div class="timeline-scroll overflow-x-auto w-full pt-1 pb-3">
           <div class="min-w-[760px] select-none">
             
-            <!-- Time header ticks (10 AM to 12 AM) -->
-            <div class="flex items-center text-[10px] font-mono font-semibold text-stone-400 border-b border-stone-200 pb-2 mb-2">
-              <div class="w-44 shrink-0 uppercase tracking-wider text-[10px] text-stone-400 pl-1">Event</div>
-              <div class="flex-1 relative h-4">
+            <!-- Time Axis Header -->
+            <div class="flex items-center text-[11px] font-mono font-semibold text-stone-500 border-b border-stone-200 pb-2 mb-2">
+              <div class="w-44 shrink-0 text-stone-400 uppercase text-[10px] tracking-wider pl-1">Event</div>
+              <div class="flex-1 relative h-5">
                 <div class="absolute inset-0 flex justify-between">
                   <span>10 AM</span>
                   <span>11 AM</span>
@@ -185,120 +200,91 @@
               </div>
             </div>
 
-            <!-- Gantt visual bar lanes -->
-            <div id="ganttBars" class="space-y-2 py-1">
-              <!-- Rendered via JS -->
-            </div>
+            <!-- Gantt Rows Container -->
+            <div id="ganttBars" class="space-y-2 relative"></div>
+
           </div>
         </div>
       </section>
 
-      <!-- Slot Editor Section -->
-      <section class="bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden">
-        <div class="px-4 py-3.5 sm:px-5 sm:py-4 bg-stone-50/70 border-b border-stone-100 flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 class="font-serif-title text-xl sm:text-2xl font-bold text-stone-900 flex items-center gap-2">
-              Event Slots & Cascading Controls
-            </h2>
-            <p class="text-xs text-stone-500 mt-0.5">Use the +15m / -15m quick nudges, inputs, or tap the Edit (pencil) button for full details.</p>
-          </div>
-          <span id="eventsTotalBadge" class="text-xs font-semibold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-200">
-            7 Events Planned
-          </span>
+      <!-- Slot Editor Cards -->
+      <section class="bg-white border border-stone-200 rounded-xl p-4 sm:p-5 shadow-xs">
+        <div class="flex items-center justify-between mb-4 pb-2 border-b border-stone-100">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-stone-800 flex items-center gap-2">
+            <i data-lucide="clock" class="w-4 h-4 text-amber-600"></i> Event Slots & Duration Editor
+          </h2>
+          <span class="text-xs text-stone-500">Tap pencil to edit details or adjust ±15m</span>
         </div>
-
-        <!-- Individual Event Cards List -->
-        <div id="eventList" class="divide-y divide-stone-100">
-          <!-- Populated by JS -->
-        </div>
+        <div id="eventList" class="divide-y divide-stone-100"></div>
       </section>
 
     </div>
 
-    <!-- Placeholder view for dates with no details yet -->
-    <div id="placeholderContainer" class="hidden bg-white rounded-2xl border border-dashed border-stone-300 p-8 sm:p-14 text-center shadow-xs">
-      <div class="w-14 h-14 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center mx-auto mb-3.5 border border-amber-200">
+    <!-- Placeholder view for dates without finalized details -->
+    <div id="placeholderContainer" class="hidden bg-white border border-dashed border-stone-300 rounded-xl p-12 text-center shadow-xs">
+      <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center mx-auto mb-3">
         <i data-lucide="calendar" class="w-6 h-6"></i>
       </div>
-      <span class="inline-block px-3 py-1 bg-amber-50 text-amber-800 text-[11px] font-semibold rounded-full border border-amber-200 mb-2">Upcoming Day</span>
-      <h3 class="font-serif-title text-2xl sm:text-3xl font-bold text-stone-900 mb-2" id="placeholderHeading">Details to be updated soon</h3>
-      <p class="text-stone-500 text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
-        The detailed itinerary and rituals for this date will be finalized and updated soon. Check back shortly!
-      </p>
+      <h3 class="text-base font-bold text-stone-800">Details to be updated soon</h3>
+      <p class="text-xs text-stone-500 mt-1 max-w-sm mx-auto">The itinerary for this date has not been finalized yet. Check back later once the schedule is set.</p>
     </div>
 
   </main>
 
-  <!-- Edit Modal Window (Pencil icon & Gantt bar click) -->
-  <div id="editModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-stone-200 relative animate-in fade-in zoom-in-95 duration-150">
-      
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between pb-3.5 border-b border-stone-100">
-        <div class="flex items-center gap-2">
-          <div class="p-2 bg-amber-50 rounded-xl text-amber-700">
-            <i data-lucide="edit-3" class="w-4 h-4"></i>
-          </div>
-          <h3 class="font-serif-title text-xl font-bold text-stone-900" id="modalTitle">Edit Event Slot</h3>
-        </div>
-        <button onclick="closeEditModal()" class="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition">
+  <!-- Edit Modal Window -->
+  <div id="editModal" class="fixed inset-0 bg-stone-900/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-xs no-print">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 border border-stone-200 animate-in fade-in zoom-in-95 duration-150">
+      <div class="flex items-center justify-between pb-3 border-b border-stone-100">
+        <h3 class="text-base font-bold text-stone-900 flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-4 h-4 text-amber-600"></i> Edit Event Details
+        </h3>
+        <button onclick="closeModal()" class="text-stone-400 hover:text-stone-700 p-1 rounded-lg">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <!-- Modal Body Form -->
-      <form id="editForm" onsubmit="saveModalChanges(event)" class="mt-4 space-y-4">
-        <input type="hidden" id="editEventIndex" value="">
-
+      <div class="space-y-3.5 text-xs sm:text-sm">
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1">Event Name</label>
-          <input type="text" id="editName" required class="w-full text-sm px-3 py-2 rounded-xl border border-stone-300 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          <label class="block font-semibold text-stone-700 mb-1">Event Name</label>
+          <input type="text" id="modalName" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden">
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1">Start Time</label>
-            <input type="time" id="editStartTime" required class="w-full text-sm font-mono px-3 py-2 rounded-xl border border-stone-300 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            <label class="block font-semibold text-stone-700 mb-1">Start Time</label>
+            <input type="time" id="modalStart" class="w-full border border-stone-300 rounded-lg px-3 py-2 font-mono text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1">Duration (Minutes)</label>
-            <input type="number" id="editDuration" min="15" step="15" required class="w-full text-sm font-mono px-3 py-2 rounded-xl border border-stone-300 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+            <label class="block font-semibold text-stone-700 mb-1">Duration (Mins)</label>
+            <input type="number" id="modalDuration" step="15" min="15" class="w-full border border-stone-300 rounded-lg px-3 py-2 font-mono text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1">Notes / Description</label>
-          <input type="text" id="editNotes" placeholder="e.g. Venue details, clothes change, timing notes" class="w-full text-sm px-3 py-2 rounded-xl border border-stone-300 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+          <label class="block font-semibold text-stone-700 mb-1">Notes / Description</label>
+          <textarea id="modalNote" rows="2" class="w-full border border-stone-300 rounded-lg px-3 py-2 text-stone-900 focus:ring-2 focus:ring-amber-500 focus:outline-hidden resize-none"></textarea>
         </div>
 
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-stone-500 mb-1.5">Color Tag</label>
-          <div class="flex items-center gap-2 flex-wrap" id="colorPickerContainer">
-            <!-- Rendered by JS -->
-          </div>
+          <label class="block font-semibold text-stone-700 mb-1.5">Color Accent</label>
+          <div class="flex items-center gap-2.5" id="colorPickerGroup"></div>
         </div>
 
         <div class="pt-2">
-          <label class="flex items-start gap-2.5 p-3 rounded-xl border border-stone-200 bg-stone-50 cursor-pointer select-none">
-            <input type="checkbox" id="editLocked" class="w-4 h-4 accent-amber-600 rounded mt-0.5 cursor-pointer">
-            <div class="text-xs">
-              <span class="font-bold text-stone-900 block">Lock as Fixed Anchor (🔒)</span>
-              <span class="text-stone-500">When checked, earlier delays will stop cascading before pushing this event past its fixed slot.</span>
+          <label class="flex items-center gap-2.5 cursor-pointer select-none bg-stone-50 border border-stone-200 p-2.5 rounded-lg">
+            <input type="checkbox" id="modalLocked" class="w-4 h-4 accent-amber-600 rounded">
+            <div>
+              <span class="font-bold text-xs text-stone-800">Lock Slot Anchor</span>
+              <p class="text-[11px] text-stone-500">Prevent cascade shifts from moving this slot automatically</p>
             </div>
           </label>
         </div>
+      </div>
 
-        <!-- Modal Actions -->
-        <div class="pt-3 border-t border-stone-100 flex items-center justify-end gap-2.5">
-          <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-xl border border-stone-300 text-stone-600 text-xs font-semibold hover:bg-stone-50 transition">
-            Cancel
-          </button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-xs transition active:scale-95">
-            Save Changes
-          </button>
-        </div>
-      </form>
-
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-stone-100">
+        <button onclick="closeModal()" class="px-4 py-2 rounded-lg border border-stone-300 text-xs font-semibold text-stone-600 hover:bg-stone-50">Cancel</button>
+        <button onclick="saveModalChanges()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs">Save Changes</button>
+      </div>
     </div>
   </div>
 
@@ -307,305 +293,398 @@
   </footer>
 
   <script>
-    // Master Baseline Data for Feb 16
     const DEFAULT_FEB16 = [
       {
         id: 'haldi',
         name: 'Haldi Ceremony',
-        category: 'Ritual',
-        startMin: 630, // 10:30 AM (Start window 10:00 - 11:00 AM)
+        startMin: 630, // 10:30 AM
         durationMin: 150, // 2h 30m -> 1:00 PM
-        note: 'Startime: 10-11 am',
         color: '#d97706',
+        note: 'Startime: 10-11 am',
         locked: false
       },
       {
         id: 'lunch',
         name: 'Lunch',
-        category: 'Meal',
         startMin: 780, // 1:00 PM
         durationMin: 75, // 1h 15m -> 2:15 PM
-        note: 'Lunch post-Haldi',
         color: '#0284c7',
+        note: 'Lunch post-Haldi',
         locked: false
       },
       {
         id: 'hotel',
         name: 'Chill at hotel',
-        category: 'Downtime',
         startMin: 855, // 2:15 PM
         durationMin: 165, // 2h 45m -> 5:00 PM
-        note: 'Shower, relax, get ready for evening',
         color: '#059669',
+        note: 'Shower, relax, get ready for evening',
         locked: false
       },
       {
         id: 'makeup',
         name: 'Makeup artist at studio',
-        category: 'Styling',
         startMin: 1020, // 5:00 PM
         durationMin: 120, // 2h -> 7:00 PM
-        note: '~2 hours (Starts 5:00 PM)',
         color: '#db2777',
+        note: '~2 hours (Starts 5:00 PM)',
         locked: false
       },
       {
         id: 'transit',
         name: 'Buffer / Travel to Venue',
-        category: 'Transit',
         startMin: 1140, // 7:00 PM
         durationMin: 60, // 1h -> 8:00 PM
-        note: 'Transit, touchups',
         color: '#64748b',
+        note: 'Transit, touchups',
         locked: false
       },
       {
         id: 'ashirbaad',
         name: 'Groom Ashirbaad',
-        category: 'Ritual',
         startMin: 1200, // 8:00 PM
         durationMin: 45, // 45m -> 8:45 PM
-        note: 'Small event before groom leaves for the venue',
         color: '#ea580c',
+        note: 'Small event before groom leaves for the venue',
         locked: false
       },
       {
         id: 'wedding',
         name: 'Main Wedding Ceremony',
-        category: 'Ceremony',
         startMin: 1245, // 8:45 PM
         durationMin: 135, // 2h 15m -> 11:00 PM
-        note: 'Start: 8:30-9 PM, End: 10:30-11 PM (to confirm later)',
         color: '#b91c1c',
+        note: 'Start: 8:30-9 PM, End: 10:30-11 PM (to confirm later)',
         locked: false
       }
     ];
 
+    const TAB_INFO = {
+      'feb16': { title: 'Wedding Day Schedule', subtitle: 'Monday, February 16, 2026' },
+      'feb17': { title: 'Post-Wedding Reception & Ceremonies', subtitle: 'Tuesday, February 17, 2026' },
+      'feb18': { title: 'Family Events & Gatherings', subtitle: 'Wednesday, February 18, 2026' },
+      'feb19': { title: 'Farewell & Departure', subtitle: 'Thursday, February 19, 2026' }
+    };
+
     const PALETTE = ['#d97706', '#0284c7', '#059669', '#db2777', '#64748b', '#ea580c', '#b91c1c', '#7c3aed'];
-    const STORAGE_KEY = 'wedding_timeline_feb16_v5';
+    const STORAGE_KEY = 'wedding_timeline_feb16_v6';
 
     let currentTab = 'feb16';
     let cascadeEnabled = true;
     let events = [];
+    let editingIndex = null;
     let selectedColor = '#d97706';
 
-    function init() {
+    function loadEvents() {
       try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          events = JSON.parse(stored);
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          events = JSON.parse(saved);
         } else {
           events = JSON.parse(JSON.stringify(DEFAULT_FEB16));
         }
       } catch (e) {
         events = JSON.parse(JSON.stringify(DEFAULT_FEB16));
       }
-
-      const cascadeToggle = document.getElementById('cascadeToggle');
-      if (cascadeToggle) {
-        cascadeToggle.checked = cascadeEnabled;
-      }
-
-      render();
     }
 
     function saveEvents() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
       } catch (e) {
-        console.warn('Could not save to localStorage', e);
+        console.warn('Unable to write to localStorage', e);
       }
     }
 
-    // Time conversion helpers
-    function minToTimeStr(totalMinutes) {
-      let m = Math.floor(totalMinutes % 1440);
-      if (m < 0) m += 1440;
-      let hours = Math.floor(m / 60);
+    function minToTimeStr(minutes) {
+      let m = Math.floor(minutes % 1440);
+      let h = Math.floor(m / 60);
       let mins = m % 60;
-      let period = hours >= 12 ? 'PM' : 'AM';
-      let hours12 = hours % 12 || 12;
-      return `${hours12}:${String(mins).padStart(2, '0')} ${period}`;
+      let ampm = h >= 12 ? 'PM' : 'AM';
+      let hour12 = h % 12 || 12;
+      return `${hour12}:${mins.toString().padStart(2, '0')} ${ampm}`;
     }
 
-    function minToInputVal(totalMinutes) {
-      let m = Math.floor(totalMinutes % 1440);
-      if (m < 0) m += 1440;
-      let hours = Math.floor(m / 60);
+    function minToInputVal(minutes) {
+      let m = Math.floor(minutes % 1440);
+      let h = Math.floor(m / 60);
       let mins = m % 60;
-      return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+      return `${h.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
     }
 
     function inputValToMin(val) {
-      if (!val) return 0;
       const [h, m] = val.split(':').map(Number);
-      return (h * 60) + (m || 0);
-    }
-
-    function formatDuration(mins) {
-      const h = Math.floor(mins / 60);
-      const m = mins % 60;
-      if (h === 0) return `${m}m`;
-      if (m === 0) return `${h}h`;
-      return `${h}h ${m}m`;
+      return h * 60 + m;
     }
 
     function toggleCascade() {
       cascadeEnabled = document.getElementById('cascadeToggle').checked;
-      showToast(`Cascade Mode is now ${cascadeEnabled ? 'ON' : 'OFF'}`);
     }
 
     function resetDefaults() {
-      events = JSON.parse(JSON.stringify(DEFAULT_FEB16));
-      saveEvents();
-      render();
-      showToast('Reset timeline to official defaults');
-    }
-
-    function propagateCascade(changedIndex) {
-      if (!cascadeEnabled) {
+      if (confirm("Reset timeline back to the official default schedule?")) {
+        events = JSON.parse(JSON.stringify(DEFAULT_FEB16));
         saveEvents();
         render();
-        return;
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-amber-600', 'text-amber-800', 'bg-amber-50/70');
+        btn.classList.add('border-transparent', 'text-stone-500');
+      });
+      const activeBtn = document.getElementById(`tab-${tab}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('border-transparent', 'text-stone-500');
+        activeBtn.classList.add('border-amber-600', 'text-amber-800', 'bg-amber-50/70');
       }
 
-      for (let i = changedIndex; i < events.length - 1; i++) {
-        const current = events[i];
-        const next = events[i + 1];
-        const currentEnd = current.startMin + current.durationMin;
-
-        if (next.locked) {
-          break; // Stop cascade at locked anchor
-        } else {
-          next.startMin = currentEnd;
-        }
+      if (tab === 'feb16') {
+        document.getElementById('timelineContainer').classList.remove('hidden');
+        document.getElementById('placeholderContainer').classList.add('hidden');
+        render();
+      } else {
+        document.getElementById('timelineContainer').classList.add('hidden');
+        document.getElementById('placeholderContainer').classList.remove('hidden');
       }
-
-      saveEvents();
-      render();
     }
 
     function handleStartChange(index, newTimeStr) {
-      const newMinutes = inputValToMin(newTimeStr);
-      events[index].startMin = newMinutes;
-      propagateCascade(index);
+      const newStart = inputValToMin(newTimeStr);
+      const diff = newStart - events[index].startMin;
+      events[index].startMin = newStart;
+
+      if (cascadeEnabled) {
+        for (let i = index + 1; i < events.length; i++) {
+          if (!events[i].locked) {
+            events[i].startMin += diff;
+          } else {
+            break;
+          }
+        }
+      }
+      saveEvents();
+      render();
     }
 
     function adjustDuration(index, deltaMinutes) {
       const newDur = Math.max(15, events[index].durationMin + deltaMinutes);
-      events[index].durationMin = newDur;
-      propagateCascade(index);
+      handleDurationChange(index, newDur);
+    }
+
+    function handleDurationChange(index, newDuration) {
+      const dur = parseInt(newDuration, 10);
+      if (isNaN(dur) || dur < 15) return;
+      const oldEnd = events[index].startMin + events[index].durationMin;
+      events[index].durationMin = dur;
+      const newEnd = events[index].startMin + dur;
+      const diff = newEnd - oldEnd;
+
+      if (cascadeEnabled) {
+        for (let i = index + 1; i < events.length; i++) {
+          if (!events[i].locked) {
+            events[i].startMin += diff;
+          } else {
+            break;
+          }
+        }
+      }
+      saveEvents();
+      render();
     }
 
     function toggleLock(index) {
       events[index].locked = !events[index].locked;
       saveEvents();
       render();
-      showToast(events[index].locked ? `Locked start time for ${events[index].name}` : `Unlocked ${events[index].name}`);
     }
 
-    // Modal Handlers
+    // Modal Operations
     function openEditModal(index) {
-      const evt = events[index];
-      if (!evt) return;
-
-      document.getElementById('editEventIndex').value = index;
-      document.getElementById('editName').value = evt.name;
-      document.getElementById('editStartTime').value = minToInputVal(evt.startMin);
-      document.getElementById('editDuration').value = evt.durationMin;
-      document.getElementById('editNotes').value = evt.note || '';
-      document.getElementById('editLocked').checked = !!evt.locked;
-      selectedColor = evt.color || PALETTE[0];
-
+      editingIndex = index;
+      const ev = events[index];
+      document.getElementById('modalName').value = ev.name;
+      document.getElementById('modalStart').value = minToInputVal(ev.startMin);
+      document.getElementById('modalDuration').value = ev.durationMin;
+      document.getElementById('modalNote').value = ev.note;
+      document.getElementById('modalLocked').checked = ev.locked;
+      selectedColor = ev.color;
       renderColorPicker();
-
-      const modal = document.getElementById('editModal');
-      modal.classList.remove('hidden');
-      if (window.lucide) lucide.createIcons();
+      document.getElementById('editModal').classList.remove('hidden');
     }
 
-    function closeEditModal() {
+    function closeModal() {
       document.getElementById('editModal').classList.add('hidden');
+      editingIndex = null;
     }
 
     function renderColorPicker() {
-      const container = document.getElementById('colorPickerContainer');
-      container.innerHTML = '';
+      const group = document.getElementById('colorPickerGroup');
+      group.innerHTML = '';
       PALETTE.forEach(c => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `w-7 h-7 rounded-full transition-transform active:scale-95 border-2 ${selectedColor === c ? 'border-stone-900 scale-110 shadow-sm' : 'border-white'}`;
-        btn.style.backgroundColor = c;
-        btn.onclick = () => {
+        const dot = document.createElement('button');
+        dot.type = "button";
+        dot.className = `w-7 h-7 rounded-full border-2 transition ${selectedColor === c ? 'border-stone-900 scale-110 shadow-sm' : 'border-white opacity-80 hover:opacity-100'}`;
+        dot.style.backgroundColor = c;
+        dot.onclick = () => {
           selectedColor = c;
           renderColorPicker();
         };
-        container.appendChild(btn);
+        group.appendChild(dot);
       });
     }
 
-    function saveModalChanges(e) {
-      e.preventDefault();
-      const idx = parseInt(document.getElementById('editEventIndex').value, 10);
-      if (isNaN(idx) || !events[idx]) return;
+    function saveModalChanges() {
+      if (editingIndex === null) return;
+      const ev = events[editingIndex];
+      const newName = document.getElementById('modalName').value.trim();
+      const newStartStr = document.getElementById('modalStart').value;
+      const newDur = parseInt(document.getElementById('modalDuration').value, 10);
+      const newNote = document.getElementById('modalNote').value.trim();
+      const newLocked = document.getElementById('modalLocked').checked;
 
-      const newName = document.getElementById('editName').value.trim();
-      const newStart = inputValToMin(document.getElementById('editStartTime').value);
-      const newDur = parseInt(document.getElementById('editDuration').value, 10);
-      const newNotes = document.getElementById('editNotes').value.trim();
-      const newLocked = document.getElementById('editLocked').checked;
+      if (newName) ev.name = newName;
+      ev.note = newNote;
+      ev.color = selectedColor;
+      ev.locked = newLocked;
 
-      events[idx].name = newName;
-      events[idx].startMin = newStart;
-      events[idx].durationMin = Math.max(15, newDur);
-      events[idx].note = newNotes;
-      events[idx].locked = newLocked;
-      events[idx].color = selectedColor;
+      if (!isNaN(newDur) && newDur >= 15) {
+        handleDurationChange(editingIndex, newDur);
+      }
+      if (newStartStr) {
+        handleStartChange(editingIndex, newStartStr);
+      }
 
-      closeEditModal();
-      propagateCascade(idx);
-      showToast(`Saved changes for ${newName}`);
+      saveEvents();
+      closeModal();
+      render();
     }
 
-    // Render Gantt Progression
+    // Tab-Specific PDF Export (No visualizer included)
+    function exportActiveTabPDF() {
+      const tabMeta = TAB_INFO[currentTab] || { title: 'Wedding Schedule', subtitle: 'February 2026' };
+      document.getElementById('printTabTitle').textContent = tabMeta.title;
+      document.getElementById('printTabSubtitle').textContent = tabMeta.subtitle;
+
+      const tbody = document.getElementById('printTableBody');
+      const tableWrapper = document.getElementById('printTableWrapper');
+      const placeholderWrapper = document.getElementById('printPlaceholderWrapper');
+
+      tbody.innerHTML = '';
+
+      if (currentTab === 'feb16') {
+        tableWrapper.classList.remove('hidden');
+        placeholderWrapper.classList.add('hidden');
+
+        events.forEach(ev => {
+          const startStr = minToTimeStr(ev.startMin);
+          const endStr = minToTimeStr(ev.startMin + ev.durationMin);
+          const hours = Math.floor(ev.durationMin / 60);
+          const mins = ev.durationMin % 60;
+          let durText = '';
+          if (hours > 0) durText += `${hours}h `;
+          if (mins > 0 || hours === 0) durText += `${mins}m`;
+
+          const tr = document.createElement('tr');
+          tr.className = "border-b border-stone-200 py-2.5";
+          tr.innerHTML = `
+            <td class="py-2.5 px-2 font-mono font-bold text-stone-900 whitespace-nowrap">${startStr} – ${endStr}</td>
+            <td class="py-2.5 px-2 font-mono text-stone-600">${durText.trim()}</td>
+            <td class="py-2.5 px-2">
+              <span class="font-bold text-stone-900 text-sm block">${ev.name}</span>
+              <span class="text-stone-500 text-[11px] block mt-0.5">${ev.note}</span>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tableWrapper.classList.add('hidden');
+        placeholderWrapper.classList.remove('hidden');
+      }
+
+      window.print();
+    }
+
+    function copySingleDayWhatsApp() {
+      if (currentTab === 'feb16') {
+        let text = "✨ *Wedding Itinerary — Feb 16 (Day Schedule)* ✨\n\n";
+        events.forEach(ev => {
+          const startStr = minToTimeStr(ev.startMin);
+          const endStr = minToTimeStr(ev.startMin + ev.durationMin);
+          text += `📍 *${startStr} - ${endStr}*: ${ev.name}\n`;
+          if (ev.note) text += `   _${ev.note}_\n`;
+        });
+        text += "\n_(Timings subject to slight variations)_";
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Feb 16 schedule copied to clipboard for WhatsApp!");
+        });
+      } else {
+        alert("The schedule for this date is yet to be finalized.");
+      }
+    }
+
+    function copyAllDaysWhatsApp() {
+      let text = "💍 *WEDDING ITINERARY OVERVIEW (Feb 16 - 19, 2026)* 💍\n\n";
+      
+      text += "🗓️ *MONDAY, FEB 16 (Wedding Day)*\n";
+      events.forEach(ev => {
+        const startStr = minToTimeStr(ev.startMin);
+        const endStr = minToTimeStr(ev.startMin + ev.durationMin);
+        text += `• *${startStr} - ${endStr}*: ${ev.name}`;
+        if (ev.note) text += ` (${ev.note})`;
+        text += "\n";
+      });
+      text += "\n";
+
+      text += "🗓️ *TUESDAY, FEB 17*\n";
+      text += "• _Details to be updated soon_\n\n";
+
+      text += "🗓️ *WEDNESDAY, FEB 18*\n";
+      text += "• _Details to be updated soon_\n\n";
+
+      text += "🗓️ *THURSDAY, FEB 19*\n";
+      text += "• _Details to be updated soon_\n\n";
+
+      text += "ℹ️ _Note: Timings are tentative and subject to minor adjustments._";
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Complete 4-Day Wedding Itinerary copied to clipboard for WhatsApp!");
+      });
+    }
+
     function renderGantt() {
       const container = document.getElementById('ganttBars');
-      if (!container) return;
       container.innerHTML = '';
-
-      // Spans 10:00 AM (600 mins) to 12:00 AM Midnight (1440 mins) = 840 mins total
-      const chartStart = 600;
-      const chartEnd = 1440;
-      const totalSpan = chartEnd - chartStart;
+      
+      const chartStart = 570; // 9:30 AM
+      const chartEnd = 1440; // 12:00 AM Midnight
+      const totalMinutes = chartEnd - chartStart;
 
       events.forEach((ev, idx) => {
-        const startClamped = Math.max(chartStart, Math.min(chartEnd, ev.startMin));
-        const endClamped = Math.max(chartStart, Math.min(chartEnd, ev.startMin + ev.durationMin));
-        const leftPercent = ((startClamped - chartStart) / totalSpan) * 100;
-        const widthPercent = Math.max(2.5, ((endClamped - startClamped) / totalSpan) * 100);
+        const startOffset = Math.max(0, ev.startMin - chartStart);
+        const leftPercent = (startOffset / totalMinutes) * 100;
+        const widthPercent = (ev.durationMin / totalMinutes) * 100;
+        const boundedLeft = Math.max(0, Math.min(99, leftPercent));
+        const boundedWidth = Math.max(2, Math.min(100 - boundedLeft, widthPercent));
 
         const row = document.createElement('div');
-        row.className = "flex items-center text-xs h-8 hover:bg-stone-50/80 rounded-lg transition px-1 group cursor-pointer";
-        row.onclick = () => openEditModal(idx);
+        row.className = "flex items-center text-xs h-9 hover:bg-stone-50/80 rounded transition px-1";
         row.innerHTML = `
-          <div class="w-44 shrink-0 font-medium text-stone-700 pr-2 truncate text-xs flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${ev.color};"></span>
-            ${ev.locked ? '<i data-lucide="lock" class="w-3 h-3 text-amber-700 shrink-0"></i>' : ''}
-            <span class="truncate">${ev.name}</span>
+          <div class="w-44 shrink-0 font-medium text-stone-800 pr-3 truncate text-xs flex items-center gap-1.5 cursor-pointer" onclick="openEditModal(${idx})">
+            <span class="w-2 h-2 rounded-full shrink-0" style="background-color: ${ev.color};"></span>
+            <span class="truncate hover:text-amber-700">${ev.name}</span>
           </div>
           <div class="flex-1 relative h-6 bg-stone-100 rounded-md overflow-hidden">
-            <!-- Background grid column lines -->
-            <div class="absolute inset-0 grid grid-cols-14 pointer-events-none opacity-25 divide-x divide-stone-300">
+            <div class="absolute inset-0 grid grid-cols-14 pointer-events-none opacity-20 divide-x divide-stone-400">
               <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
             </div>
-            <!-- Progress Bar -->
-            <div 
-              style="left: ${leftPercent}%; width: ${widthPercent}%; background-color: ${ev.color};"
-              class="absolute top-0 bottom-0 rounded-md flex items-center justify-between px-2 text-[10px] text-white font-semibold truncate shadow-xs transition-all duration-150 group-hover:brightness-105"
-              title="Click to edit: ${ev.name} (${minToTimeStr(ev.startMin)} – ${minToTimeStr(ev.startMin + ev.durationMin)})"
-            >
-              <span class="truncate">${minToTimeStr(ev.startMin)}</span>
-              <span class="opacity-90 font-mono text-[9px] hidden sm:inline">${formatDuration(ev.durationMin)}</span>
+            <div class="absolute top-0 bottom-0 rounded-md flex items-center px-2 text-[10.5px] font-semibold text-white truncate shadow-xs transition-all duration-150 cursor-pointer"
+                 style="left: ${boundedLeft}%; width: ${boundedWidth}%; background-color: ${ev.color};"
+                 onclick="openEditModal(${idx})"
+                 title="${ev.name}: ${minToTimeStr(ev.startMin)} - ${minToTimeStr(ev.startMin + ev.durationMin)}">
+              <span class="truncate drop-shadow-xs">${minToTimeStr(ev.startMin)} – ${minToTimeStr(ev.startMin + ev.durationMin)}</span>
             </div>
           </div>
         `;
@@ -613,64 +692,57 @@
       });
     }
 
-    // Render Event List Cards
     function renderList() {
       const container = document.getElementById('eventList');
-      if (!container) return;
       container.innerHTML = '';
 
       events.forEach((ev, idx) => {
         const endMin = ev.startMin + ev.durationMin;
         const row = document.createElement('div');
-        row.className = "p-3.5 sm:p-4 hover:bg-stone-50/70 transition flex flex-col lg:flex-row lg:items-center justify-between gap-3";
+        row.className = "py-3.5 flex flex-col lg:flex-row lg:items-center justify-between gap-3";
         row.innerHTML = `
-          <!-- Info -->
-          <div class="flex items-start gap-3 min-w-0 flex-1">
+          <div class="flex items-start gap-3 flex-1 min-w-0">
             <span class="w-3.5 h-3.5 rounded-full shrink-0 mt-1 shadow-2xs" style="background-color: ${ev.color}"></span>
             <div class="min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
-                <span class="font-serif-title font-bold text-stone-900 text-base sm:text-lg">${ev.name}</span>
+                <span class="font-bold text-stone-900 text-sm">${ev.name}</span>
                 <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-stone-100 font-semibold text-stone-700">
                   ${minToTimeStr(ev.startMin)} – ${minToTimeStr(endMin)}
                 </span>
-                ${ev.locked ? '<span class="text-[10px] uppercase font-bold bg-amber-100 border border-amber-300 text-amber-900 px-1.5 py-0.5 rounded flex items-center gap-1"><i data-lucide="lock" class="w-2.5 h-2.5"></i> Locked Anchor</span>' : ''}
+                ${ev.locked ? '<span class="text-[10px] uppercase font-bold bg-amber-100 border border-amber-300 text-amber-900 px-1.5 py-0.5 rounded">Locked Anchor</span>' : ''}
               </div>
-              <p class="text-xs text-stone-500 mt-0.5">${ev.note || 'No notes'}</p>
+              <p class="text-xs text-stone-500 mt-0.5">${ev.note}</p>
             </div>
           </div>
 
-          <!-- Controls -->
           <div class="flex items-center gap-2 sm:gap-2.5 flex-wrap self-start lg:self-center">
             
-            <!-- Start Time Input -->
-            <div class="flex items-center gap-1 bg-stone-50 border border-stone-200 px-2 py-1 rounded-xl">
+            <!-- Start Time -->
+            <div class="flex items-center gap-1.5 bg-stone-50 border border-stone-200 px-2 py-1 rounded-lg">
               <label class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Start</label>
-              <input 
-                type="time" 
-                value="${minToInputVal(ev.startMin)}" 
-                onchange="handleStartChange(${idx}, this.value)"
-                class="bg-white border border-stone-300 rounded px-1.5 py-0.5 text-xs font-mono font-medium focus:ring-1 focus:ring-amber-500 cursor-pointer shadow-2xs"
-              />
+              <input type="time" value="${minToInputVal(ev.startMin)}" 
+                     onchange="handleStartChange(${idx}, this.value)"
+                     class="bg-white border border-stone-300 rounded px-1.5 py-0.5 text-xs font-mono font-medium focus:ring-1 focus:ring-amber-500 cursor-pointer">
             </div>
 
             <!-- Duration Controls -->
-            <div class="flex items-center gap-1 bg-stone-50 border border-stone-200 px-2 py-1 rounded-xl">
+            <div class="flex items-center gap-1 bg-stone-50 border border-stone-200 px-2 py-1 rounded-lg">
               <label class="text-[10px] font-bold uppercase tracking-wider text-stone-400">Duration</label>
-              <button onclick="adjustDuration(${idx}, -15)" class="w-5 h-5 flex items-center justify-center bg-white border border-stone-300 rounded hover:bg-stone-100 text-xs font-bold text-stone-600 transition shadow-2xs" title="Shorten by 15m">-</button>
-              <span class="font-mono text-xs font-semibold px-1 min-w-[42px] text-center">${formatDuration(ev.durationMin)}</span>
-              <button onclick="adjustDuration(${idx}, 15)" class="w-5 h-5 flex items-center justify-center bg-white border border-stone-300 rounded hover:bg-stone-100 text-xs font-bold text-stone-600 transition shadow-2xs" title="Extend by 15m">+</button>
+              <button onclick="adjustDuration(${idx}, -15)" class="w-5 h-5 flex items-center justify-center bg-white border border-stone-300 rounded hover:bg-stone-100 text-xs font-bold text-stone-600 transition" title="Minus 15 mins">-</button>
+              <span class="font-mono text-xs font-semibold px-1 min-w-[42px] text-center">${ev.durationMin}m</span>
+              <button onclick="adjustDuration(${idx}, 15)" class="w-5 h-5 flex items-center justify-center bg-white border border-stone-300 rounded hover:bg-stone-100 text-xs font-bold text-stone-600 transition" title="Plus 15 mins">+</button>
             </div>
 
-            <!-- Edit Button (Opens Modal Form) -->
-            <button onclick="openEditModal(${idx})" title="Edit event name, color, notes, or details" class="p-2 rounded-xl border border-stone-200 bg-white hover:bg-amber-50 hover:border-amber-300 text-stone-600 hover:text-amber-800 transition shadow-2xs">
-              <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+            <!-- Edit Button Modal -->
+            <button onclick="openEditModal(${idx})" title="Edit event name, note, or color" class="p-1.5 rounded-lg border border-stone-200 bg-white text-stone-600 hover:text-amber-800 hover:bg-amber-50/50 transition shadow-2xs">
+              <i data-lucide="pencil" class="w-4 h-4"></i>
             </button>
 
             <!-- Lock Button -->
             <button onclick="toggleLock(${idx})" 
-                    title="${ev.locked ? 'Unlock slot (cascades downstream)' : 'Lock slot (cascade stops before pushing this slot)'}" 
-                    class="p-2 rounded-xl border transition shadow-2xs ${ev.locked ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-white border-stone-200 text-stone-400 hover:text-stone-700 hover:bg-stone-50'}">
-              <i data-lucide="${ev.locked ? 'lock' : 'unlock'}" class="w-3.5 h-3.5"></i>
+                    title="${ev.locked ? 'Unlock slot' : 'Lock slot'}" 
+                    class="p-1.5 rounded-lg border transition ${ev.locked ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-white border-stone-200 text-stone-400 hover:text-stone-700 hover:bg-stone-50'}">
+              <i data-lucide="${ev.locked ? 'lock' : 'unlock'}" class="w-4 h-4"></i>
             </button>
 
           </div>
@@ -680,89 +752,16 @@
       lucide.createIcons();
     }
 
-    function switchTab(tabKey) {
-      currentTab = tabKey;
-
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('border-amber-300', 'bg-amber-500', 'text-white', 'shadow-2xs');
-        btn.classList.add('border-transparent', 'text-stone-600');
-      });
-
-      const activeBtn = document.getElementById(`tab-${tabKey}`);
-      if (activeBtn) {
-        activeBtn.classList.remove('border-transparent', 'text-stone-600');
-        activeBtn.classList.add('border-amber-300', 'bg-amber-500', 'text-white', 'shadow-2xs');
-      }
-
-      const timelineContainer = document.getElementById('timelineContainer');
-      const placeholderContainer = document.getElementById('placeholderContainer');
-      const placeholderHeading = document.getElementById('placeholderHeading');
-
-      if (tabKey === 'feb16') {
-        timelineContainer.classList.remove('hidden');
-        placeholderContainer.classList.add('hidden');
-        render();
-      } else {
-        timelineContainer.classList.add('hidden');
-        placeholderContainer.classList.remove('hidden');
-        const dayMap = { feb17: 'February 17 (Day 2)', feb18: 'February 18 (Day 3)', feb19: 'February 19 (Day 4)' };
-        placeholderHeading.textContent = `${dayMap[tabKey] || 'Details'} — Details to be updated soon`;
-      }
-
-      if (window.lucide) lucide.createIcons();
-    }
-
     function render() {
-      if (currentTab === 'feb16') {
-        renderGantt();
-        renderList();
-      }
-      if (window.lucide) {
-        lucide.createIcons();
-      }
+      renderGantt();
+      renderList();
     }
 
-    function copyWhatsAppFormat() {
-      let text = `✨ *WEDDING DAY SCHEDULE — FEBRUARY 16* ✨\n`;
-      text += `═══════════════════════════════\n`;
-      events.forEach(evt => {
-        const start = minToTimeStr(evt.startMin);
-        const end = minToTimeStr(evt.startMin + evt.durationMin);
-        text += `📍 *${start} – ${end}* (${formatDuration(evt.durationMin)})\n`;
-        text += `   • *${evt.name}*`;
-        if (evt.note) text += ` — ${evt.note}`;
-        text += `\n`;
-      });
-      text += `═══════════════════════════════\n`;
-      text += `*Note:* Times are interactive & subject to coordination.`;
-
-      const tempTextArea = document.createElement('textarea');
-      tempTextArea.value = text;
-      document.body.appendChild(tempTextArea);
-      tempTextArea.select();
-      try {
-        document.execCommand('copy');
-        showToast('WhatsApp schedule summary copied!');
-      } catch (err) {
-        showToast('Failed to copy to clipboard');
-      }
-      document.body.removeChild(tempTextArea);
-    }
-
-    let toastTimer;
-    function showToast(message) {
-      const toast = document.getElementById('toastMessage');
-      const text = document.getElementById('toastText');
-      if (!toast || !text) return;
-      text.textContent = message;
-      toast.classList.remove('hidden');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 2600);
-    }
-
-    window.addEventListener('DOMContentLoaded', init);
+    window.onload = () => {
+      loadEvents();
+      render();
+      lucide.createIcons();
+    };
   </script>
 </body>
 </html>
